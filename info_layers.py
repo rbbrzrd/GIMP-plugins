@@ -43,7 +43,6 @@ gettext.install( "info_layers", locale_directory, unicode=True )
 stop = False
 prob = _("\nProblem probably with the starting image!\n  Plug-in has auto quitted.")
 enum_type = [_('RGB'), _('RGBA'), _('GRAY'), _('GRAYA'), _('INDEXED'), _('INDEXEDA')]
-layers = []
 version = gimp.version
 start_minver = 6 # minor version of the previous GIMP-2.6
 
@@ -54,14 +53,11 @@ class LayerInfo(gtk.Window):
         self.img = img
         self.drw = drw
         self.text = None
+        self.layers = []        # layers object list for the image
+        self.pre_layers = []    # previous layers object list
+        self.flag_paras = False # track 'Enter text' after a 'Save all'
+        self.flag_save = False  # track 'Save all (done)'
         self.w, self.h = 0, 0
-        # dict. for the info_layers?
-        #info = {_('Name') : "%s",
-        #        _('Offsets(x,y)') : "(%d px, %d px)",
-        #        _('Position') : "%d/%d",
-        #        _('Size(w,h)') : "(%d px, %d px)",
-        #        _('Type') : "%s",
-        #        _('Parasite') : "%d , %s" }
         
         r =  gtk.Window.__init__(self, *args)
         # The window manager quit signal:
@@ -81,7 +77,7 @@ class LayerInfo(gtk.Window):
         vbox.add(separator)
 
         # for viewing or adding explanations in a parasite
-        
+
         hbox = gtk.HBox(homogeneous=False, spacing=0)
         # label for the managed parasite 
         self.label1 = gtk.Label()
@@ -109,11 +105,11 @@ class LayerInfo(gtk.Window):
             +_("\nN.B.: a layer parasite is kept only in 'XCF' file."))
         hbox.add(btn)
 
-        btn = gtk.Button(_("Save all"))
-        btn.connect("pressed", self.save_file)
-        btn.set_has_tooltip(True)
-        btn.set_tooltip_text(_("Save the info for all layers in a text file."))
-        hbox.add(btn)
+        self.btn = gtk.Button(_("Save all"))
+        self.btn.connect("pressed", self.save_file)
+        self.btn.set_has_tooltip(True)
+        self.btn.set_tooltip_text(_("Save the info for all layers in a text file."))
+        hbox.add(self.btn)
         vbox.add(hbox)
 
         # completes this window
@@ -126,7 +122,7 @@ class LayerInfo(gtk.Window):
     def update(self, *args):
         """ update the info in the GUI """
 
-        global stop, prob, layers
+        global stop, prob
 
         img_list = gimp.image_list()
         if (self.img not in img_list) or (len(self.img.layers) == 0):
@@ -136,6 +132,7 @@ class LayerInfo(gtk.Window):
             return False
         # change during the execution? Next to force auto quitting
         try:
+            # Choose an active layer by plugin? self.img.active_layer = ?
             self.drw = self.img.active_layer
             #> layer name
             name = pdb.gimp_layer_get_name(self.drw)
@@ -143,9 +140,9 @@ class LayerInfo(gtk.Window):
             #> layer offsets
             x, y = pdb.gimp_drawable_offsets(self.drw)
             #> layer position on the stack
-            layers = get_all_layers(self.img)
-            pos = layers.index(self.drw) +1
-            max_pos = len(layers)
+            self.layers = get_all_layers(self.img)
+            pos = self.layers.index(self.drw) +1
+            max_pos = len(self.layers)
             #> layer size
             h = pdb.gimp_drawable_height(self.drw)
             w = pdb.gimp_drawable_width(self.drw)
@@ -168,9 +165,11 @@ class LayerInfo(gtk.Window):
                 # seems that parasite add a zero byte at the end which don't agree with 'gtk.label'
                 paras_text = paras_text.strip(chr(0))
                 flag = _("yes") # put parasite text in the entry field
-                
-            txt = _("\n    Name : %s\n    Offsets(x,y) : (%d px, %d px)    \n    Position : %d of %d  \n    Size(w,h) : (%d px, %d px)  \n    Type : %s  \n    Parasite : %d , %s")\
-                % (name, x, y, pos, max_pos, w , h, Type, n, flag)
+
+            # packing the layer info into text for first label
+            txt = _("\n    Name : %s\n    Offsets(x,y) : (%d , %d) px    \n    ")% (name, x, y)\
+                +_("Position : %d of %d  \n    Size(w,h) : %dx%d px  \n    Type : %s  \n    Parasite : %d , %s")\
+                % (pos, max_pos, w , h, Type, n, flag)
             if not stop: timeout_add(200, self.update, self)
 
             if self.text == txt:
@@ -185,6 +184,11 @@ class LayerInfo(gtk.Window):
                         ' layer-info: '+"</span>")
                     self.label1.set_use_markup(True)
 
+                # reset label on 'Save' button after a save if there some change
+                if self.flag_save and (self.pre_layers != self.layers or self.flag_paras):
+                    self.btn.set_label(_("Save all"))
+                    self.pre_layers = self.layers
+                    self.flag_save = False
                 return
 
             # next display it in the window
@@ -205,10 +209,13 @@ class LayerInfo(gtk.Window):
     def add_info(self, btn, data=None) :
         paras_text = self.entry.get_text()
         self.drw.attach_new_parasite('layer-info', 1, paras_text)
-        # to indicate a save text in parasite
+        # to indicate a save text in the parasite
         self.label1.set_label("<span foreground='blue' background='white' >"+\
             ' layer-info: '+"</span>")
         self.label1.set_use_markup(True)
+        # flag to indicate usage of this
+        if self.flag_save: self.flag_paras = True
+        else: self.flag_paras = False
         return
         
     def save_file(self, btn, data=None) :
@@ -216,22 +223,21 @@ class LayerInfo(gtk.Window):
         Create a text file with the info for all layers and their parasites
         """
         
-        global layers
-        
         # for a XML file see  'Python-Fu #3 - Working with Layers and XML in Python-Fu'
         filename = ""
         tags = (_(') Group '), _(') Single '))
 
-        btn.set_label(_("Save all"))    # to reflect prob. in saving more than once
+        btn.set_label(_("Save all"))    # to reflect prob. if saving more than once
         # start building our text file first by an introduction
         txt = _("# An info layers file for '%s' in GIMP%s.\n")%(self.img.name, str(version))\
-            +_("# Base colour type is '%s' for this image.\n")%(enum_type[self.img.base_type * 2])\
+            +_("# Base colour type is '%s' for this image of size = %dx%d px.\n")\
+            %(enum_type[self.img.base_type * 2], self.img.width, self.img.height)\
             +_("# The classification 'Group' means has child(s) while 'Single' has not.\n")\
             +_("# Note: in text variable the newline have been replaced by '/'.\n\n")
 
         cr = 1  # the position of the layer
-        for l in layers:    # all the layers
-            if version > (2, 8, 0): childs = l.children
+        for l in self.layers:    # all the layers
+            if version >= (2, 8, 0): childs = l.children
             else: childs = None
             if childs: 
                 tag = tags[0]
@@ -251,8 +257,6 @@ class LayerInfo(gtk.Window):
                 txt.rstrip()                
                 txt += "    , %s= \"%s\"\n"%(p, paras_text)
             cr += 1
-
-        # save to the clipboard or/and a file (if clipboard use gtk.Clipboard() )?
         
         # file: user chosen file-name ("%s_layout.txt"%self.img.name)
         chooser = gtk.FileChooserDialog(title=_("User file selection"),
@@ -274,13 +278,14 @@ class LayerInfo(gtk.Window):
         filename = chooser.get_filename()
 
         if filename:
-            #gimp.message(_("filename of the file to save: ")+filename)
             try:
                 file_obj = open(filename, "w")
                 file_obj.write(txt);
                 file_obj.close()
                 # for a file save ->
-                btn.set_label(_('Save all (done)'))
+                btn.set_label(_("Save all (done)"))
+                self.pre_layers = self.layers
+                self.flag_save = True
             except:
                 gimp.message(_("ERROR in saving file: ")+filename)
         else: gimp.message(_("ERROR: no file-name given!"))
@@ -311,7 +316,7 @@ def get_parasite_list(item):
 
 ### Main procedure #############################################################
 
-def layer_info (img, drw):
+def info_layers (img, drw):
     global stop
     # avoid duplicate launch
     if shelf.has_key('info_layers') and shelf['info_layers']:
@@ -326,7 +331,7 @@ def layer_info (img, drw):
         stop = True
 
 register(
-        'layer_info',
+        'info_layers',
         _("Display actual infos on the active layer, add or edit text.\nFrom: ")+fi,
         _('Display a window with infos on the selected layer or save all.'),
         'David Marquez de la Cruz, R. Brizard',
@@ -339,7 +344,7 @@ register(
           (PF_DRAWABLE, "drw", "DRAWABLE:", None)
         ], # Parameters
         [], # Results
-        layer_info,
+        info_layers,
         menu="<Image>"+_("/Extensions/Plugins-Python/Layer"),
         domain=( "info_layers", locale_directory)
         )
