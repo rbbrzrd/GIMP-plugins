@@ -12,7 +12,8 @@ List of plug-ins
   Display a window with (7 items) info on the selected layer.
   With two action buttons: 'Enter text' in 'layer-info' parasite and 'Save all' in a file.
   
-  *Installation*
+  **Installation**
+  
   From the archive, extract the "info_layers.py" file and the "locale" folder
 to "[home directory]/.gimp-2.x/plug-ins" (merging the 'locale' folder).
 
