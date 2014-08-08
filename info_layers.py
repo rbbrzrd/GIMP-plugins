@@ -55,9 +55,12 @@ class LayerInfo(gtk.Window):
         self.text = None
         self.layers = []        # layers object list for the image
         self.pre_layers = []    # previous layers object list
+        self.names = []
+        self.pre_names = []
         self.flag_paras = False # track 'Enter text' after a 'Save all'
         self.flag_save = False  # track 'Save all (done)'
         self.w, self.h = 0, 0
+        self.pos, self.pre_max_pos = 0, 0
         
         r =  gtk.Window.__init__(self, *args)
         # The window manager quit signal:
@@ -66,9 +69,20 @@ class LayerInfo(gtk.Window):
         self.set_title(_("INFO on active layer"))
 
         vbox = gtk.VBox(spacing=6, homogeneous=False)
+        # special line for name of layer choice
+        self.combo_box = gtk.combo_box_new_text() #gtk.ComboBox()
+        self.combo_box.set_wrap_width(1)
+        self.combo_box.set_has_tooltip(True)
+        self.combo_box.set_tooltip_text(_("Choice of active layer by a click and\n")\
+            +_("selection here or in GIMP layer dialog."))
+        self.combo_box.connect("changed", self.name_change)
+        vbox.add(self.combo_box)
+
+        # info under layer name
         self.label = gtk.Label()
         self.label.set_has_tooltip(True)
-        self.label.set_tooltip_text(_("Type: Single or Group, the base channels.\n")\
+        self.label.set_tooltip_text(_("Position: on the layer stack from the top.")\
+            +_("\nType: Single or Group and the base channels.\n")\
             +_("Parasite: gives the number of layer parasite(s) attached\n")\
             +_("and if 'layer-info' is one or not."))
         vbox.add(self.label)
@@ -76,9 +90,9 @@ class LayerInfo(gtk.Window):
         separator = gtk.HSeparator()
         vbox.add(separator)
 
-        # for viewing or adding explanations in a parasite
+        # for viewing or adding explanations, in a parasite
 
-        hbox = gtk.HBox(homogeneous=False, spacing=0)
+        hbox = gtk.HBox(False, 0)
         # label for the managed parasite 
         self.label1 = gtk.Label()
         self.label1.set_use_markup(True)
@@ -125,23 +139,26 @@ class LayerInfo(gtk.Window):
         global stop, prob
 
         img_list = gimp.image_list()
-        if (self.img not in img_list) or (len(self.img.layers) == 0):
+        if (self.img not in img_list) or (len(self.img.layers) == 0) or stop:
             gimp.message(prob+_("\nIn update() first 'if' case"))
             stop = True
             gtk.main_quit()
             return False
         # change during the execution? Next to force auto quitting
         try:
+            if not stop: timeout_add(200, self.update, self)
+
             # Choose an active layer by plugin? self.img.active_layer = ?
             self.drw = self.img.active_layer
             #> layer name
+            self.layers = get_all_layers(self.img)
             name = pdb.gimp_layer_get_name(self.drw)
             name = name.replace("\n", "/").replace("'", "\'")
+            
             #> layer offsets
             x, y = pdb.gimp_drawable_offsets(self.drw)
             #> layer position on the stack
-            self.layers = get_all_layers(self.img)
-            pos = self.layers.index(self.drw) +1
+            self.pos = self.layers.index(self.drw) +1
             max_pos = len(self.layers)
             #> layer size
             h = pdb.gimp_drawable_height(self.drw)
@@ -166,12 +183,13 @@ class LayerInfo(gtk.Window):
                 paras_text = paras_text.strip(chr(0))
                 flag = _("yes") # put parasite text in the entry field
 
-            # packing the layer info into text for first label
-            txt = _("\n    Name : %s\n    Offsets(x,y) : (%d , %d) px    \n    ")% (name, x, y)\
-                +_("Position : %d of %d  \n    Size(w,h) : %dx%d px  \n    Type : %s  \n    Parasite : %d , %s")\
-                % (pos, max_pos, w , h, Type, n, flag)
-            if not stop: timeout_add(200, self.update, self)
+            # packing the layer info into text
+            txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s ")\
+                % (self.pos, max_pos, Type, name)\
+                +_("\n    Offsets(x,y) : (%d , %d) px    \n    Size(W,H) : %dx%d px  \n    Parasite : %d , %s")\
+                % (x, y, w , h, n, flag)
 
+            # update() in two parts: 1) the same text in the info list 
             if self.text == txt:
                 # change colour of 'layer-info:' if new entry text
                 entry_txt = self.entry.get_text()
@@ -191,8 +209,21 @@ class LayerInfo(gtk.Window):
                     self.flag_save = False
                 return
 
-            # next display it in the window
+            # 2) different text, displays it in the window...
             self.label.set_label(txt)
+
+            # updating the combo_box?
+            self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
+            if self.pre_names != self.names:
+                # empty self.combo_box; next seems to work
+                for i in range(self.pre_max_pos): self.combo_box.remove_text(0)
+                # repopulate it
+                for nam in self.names: self.combo_box.append_text("   %s" %nam)
+                self.pre_max_pos = len(self.names)
+                self.pre_names = self.names
+            self.combo_box.set_active(self.pos-1)
+
+            # the parasite content
             if  nflag != 0: 
                 self.entry.set_text(paras_text)
             else: 
@@ -205,6 +236,10 @@ class LayerInfo(gtk.Window):
             gtk.main_quit()
             return False
         return True
+
+    def name_change(self, btn, data=None) :
+        pdb.gimp_image_set_active_layer(self.img, self.layers[btn.get_active()])
+        return
 
     def add_info(self, btn, data=None) :
         paras_text = self.entry.get_text()
@@ -247,15 +282,17 @@ class LayerInfo(gtk.Window):
                 tag = tags[1]
                 children = ""
             # file the content for each layer and add the parasite info list
-            paras = get_parasite_list(l)[1]
-            txt += _("%d%sname=\"%s\", Width=%d, Height=%d, DX=%d, DY=%d px,%s Parasites=%s\n")\
-                %(cr, tag, l.name.replace("\n", "/"), l.width, l.height, l.offsets[0], l.offsets[1],  children, str(paras))
+            n, paras = get_parasite_list(l)
+            if n == 0: point = ' .'
+            else: point = ' :'
+            txt += _("%d%sname=\"%s\", Offsets=(%d , %d), WidthxHeight=%dx%d px,%s Parasite=%d%s\n")\
+                %(cr, tag, l.name.replace("\n", "/"), l.width, l.height, l.offsets[0], l.offsets[1],  children, n, point)
             for p in paras:
                 paras_text = str(l.parasite_find(p))
                 paras_text = paras_text.strip(chr(0))
                 paras_text = paras_text.replace("\n", "/")
                 txt.rstrip()                
-                txt += "    , %s= \"%s\"\n"%(p, paras_text)
+                txt += "    -> %s = \"%s\"\n"%(p, paras_text)
             cr += 1
         
         # file: user chosen file-name ("%s_layout.txt"%self.img.name)
