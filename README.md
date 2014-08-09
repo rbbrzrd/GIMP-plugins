@@ -14,7 +14,7 @@ List of plug-ins
   **Description**
 
   Display a window with (7 items) info on the selected layer.
-  With two action buttons: 'Enter text' in 'layer-info' parasite and 'Save all' in a file.
+  With three action buttons: a ComboBox to select an active layer, 'Enter text' in 'layer-info' parasite and 'Save all' in a file.
   
   **Installation**
   
