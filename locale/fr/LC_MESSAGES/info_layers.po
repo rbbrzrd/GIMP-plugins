@@ -4,16 +4,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: info_layers\n"
-"POT-Creation-Date: 2014-08-09 22:18+EDT\n"
-"PO-Revision-Date: 2014-08-09 22:30-0500\n"
-"Last-Translator: \n"
+"Project-Id-Version: info_layers-0.1\n"
+"POT-Creation-Date: 2014-08-10 08:54+EDT\n"
+"PO-Revision-Date: 2014-08-10 11:34-0400\n"
+"Last-Translator: robert <robert@localhost.localdomain>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 1.5.4\n"
+"Language: fr\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: info_layers.py:44
 msgid ""
@@ -286,45 +288,9 @@ msgstr ""
 
 #: info_layers.py:379
 msgid "Layer-info..."
-msgstr "Informations-calque......"
+msgstr "Informations-calque..."
 
 #: info_layers.py:387
 msgid "/Extensions/Plugins-Python/Layer"
 msgstr "/Extensions/Plugins-Python/Calque"
 
-#~ msgid ""
-#~ "\n"
-#~ "    Name : %s\n"
-#~ "    Offsets(x,y) : (%d , %d) px    \n"
-#~ "    "
-#~ msgstr ""
-#~ "\n"
-#~ "    Nom : %s\n"
-#~ "    Décalage(x,y) : (%d , %d) px    \n"
-#~ "    "
-
-#~ msgid "GRAYA-LAYER"
-#~ msgstr "CALQUE-GRISA"
-
-#~ msgid "RGB-LAYER"
-#~ msgstr "CALQUE-RVB"
-
-#~ msgid "RGBA-LAYER"
-#~ msgstr "CALQUE-RVBA"
-
-#~ msgid "INDEXEDA-LAYER"
-#~ msgstr "CALQUE-INDEXÉA"
-
-#~ msgid ""
-#~ "It's the name of the parasite in question.\n"
-#~ "A blue one is the"
-#~ msgstr ""
-#~ "C'est le nom du parasite surveillé par ce greffon.\n"
-#~ "Un nom en bleu est le"
-
-#~ msgid ""
-#~ "If there is some text not entered by you, it's the actual 'layer-info' "
-#~ "content,"
-#~ msgstr ""
-#~ "Si c'est du texte que vous n'avez pas entré, c'est le contenu actuel de "
-#~ "'layer-info'."

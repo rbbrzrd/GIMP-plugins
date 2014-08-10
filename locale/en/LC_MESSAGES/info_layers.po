@@ -4,16 +4,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: info_layers-0.1\n"
 "POT-Creation-Date: 2014-08-09 22:18+EDT\n"
-"PO-Revision-Date: 2014-08-09 22:32-0500\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2014-08-10 11:34-0400\n"
+"Last-Translator: robert <robert@localhost.localdomain>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 1.5.4\n"
+"Language: en\n"
 
 #: info_layers.py:44
 msgid ""
@@ -287,32 +288,3 @@ msgstr "Layer-info..."
 msgid "/Extensions/Plugins-Python/Layer"
 msgstr "/Extensions/Plugins-Python/Layer"
 
-#~ msgid ""
-#~ "\n"
-#~ "    Name : %s\n"
-#~ "    Offsets(x,y) : (%d , %d) px    \n"
-#~ "    "
-#~ msgstr ""
-#~ "\n"
-#~ "    Name : %s\n"
-#~ "    Offsets(x,y) : (%d , %d) px    \n"
-#~ "    "
-
-#~ msgid "GRAYA-LAYER"
-#~ msgstr "GRAYA-LAYER"
-
-#~ msgid "RGB-LAYER"
-#~ msgstr "RGB-LAYER"
-
-#~ msgid "RGBA-LAYER"
-#~ msgstr "RGBA-LAYER"
-
-#~ msgid "INDEXEDA-LAYER"
-#~ msgstr "INDEXEDA-LAYER"
-
-#~ msgid ""
-#~ "It's the name of the parasite in question.\n"
-#~ "A blue one is the"
-#~ msgstr ""
-#~ "It's the name of the parasite in question.\n"
-#~ "A blue one is the"
