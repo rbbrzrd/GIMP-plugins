@@ -154,7 +154,6 @@ class LayerInfo(gtk.Window):
             self.layers = get_all_layers(self.img)
             name = pdb.gimp_layer_get_name(self.drw)
             name = name.replace("\n", "/").replace("'", "\'")
-            
             #> layer offsets
             x, y = pdb.gimp_drawable_offsets(self.drw)
             #> layer position on the stack
@@ -189,7 +188,8 @@ class LayerInfo(gtk.Window):
                 +_("\n    Offsets(x,y) : (%d , %d) px    \n    Size(W,H) : %dx%d px  \n    Parasite : %d , %s")\
                 % (x, y, w , h, n, flag)
 
-            # update() in two parts: 1) the same text in the info list 
+            # update() in two parts:
+            # 1) the same text in the info list, update below the separator line
             if self.text == txt:
                 # change colour of 'layer-info:' if new entry text
                 entry_txt = self.entry.get_text()
@@ -201,6 +201,12 @@ class LayerInfo(gtk.Window):
                     self.label1.set_label("<span foreground='blue' background='white' >"+\
                         ' layer-info: '+"</span>")
                     self.label1.set_use_markup(True)
+
+                # the parasite content
+                if  nflag != 0: 
+                    self.entry.set_text(paras_text)
+                else: 
+                    self.entry.set_text('')
 
                 # reset label on 'Save' button after a save if there some change
                 if self.flag_save and (self.pre_layers != self.layers or self.flag_paras):
@@ -223,12 +229,6 @@ class LayerInfo(gtk.Window):
                 self.pre_names = self.names
             self.combo_box.set_active(self.pos-1)
 
-            # the parasite content
-            if  nflag != 0: 
-                self.entry.set_text(paras_text)
-            else: 
-                self.entry.set_text('')
-
             self.text = txt
         except: 
             gimp.message(prob+_("\nIn update() 'except' case"))
@@ -239,6 +239,7 @@ class LayerInfo(gtk.Window):
 
     def name_change(self, btn, data=None) :
         pdb.gimp_image_set_active_layer(self.img, self.layers[btn.get_active()])
+        pdb.gimp_displays_flush()
         return
 
     def add_info(self, btn, data=None) :
@@ -369,8 +370,9 @@ def info_layers (img, drw):
 
 register(
         'info_layers',
-        _("Display actual infos on the active layer, add or edit text.\nFrom: ")+fi,
-        _('Display a window with infos on the selected layer or save all.'),
+        _("Display actual infos on the active layer, managed a 'layer-info' parasite and an all info file.\nFrom: ")+fi,
+        _("Display a window with live infos on the selected layer; \ncontrols are ")\
+            +_("a ComboBox for selection, 'Enter text' for parasite and 'Save all' for file."),
         'David Marquez de la Cruz, R. Brizard',
         '(GPL 2)',
         '2014',

@@ -1,0 +1,499 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2014-05-09 14:50+EDT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ArrowsCreator-0.2.py:55
+msgid "Segment %d, arrow %d: "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:99 ArrowsCreator-0.2.py:107
+msgid "AC_arrow #1"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:113
+msgid "Arrow tool for GIMP"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:123 ArrowsCreator-0.2.py:870 ArrowsCreator-0.2.py:906
+msgid ""
+"Arrows creator  \n"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:124
+msgid "  To start: choose colours and path tool in design mode;"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:125
+msgid ""
+"\n"
+"place now two path anchors (nodes) by clicking at future"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:126
+msgid ""
+"\n"
+"arrow tail and head on the canvas (avoid closing the path)."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:127
+msgid ""
+"\n"
+" An arrow should appear, then adjust values in this window."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:128
+msgid ""
+"\n"
+"If not and you have followed the above, see end of status line."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:129
+msgid ""
+"\n"
+" You should move those anchors for the rest of the session."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:130
+msgid ""
+"\n"
+" To change the active arrow colour(s) and/or stroke path"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:131
+msgid ""
+"\n"
+"after it's drawn: change it in GIMP and a thing in the arrow.\n"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:155
+msgid "Arrowing size (PX)"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:163
+msgid "arrow head side, 0 means no head"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:167
+msgid "Arrowing angle (°)"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:175
+msgid "angle of a head wing in relation"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:176
+msgid ""
+"\n"
+"to head direction"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:180
+msgid ""
+"Brush size (radius,PX)\n"
+" for '%s'"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:189
+msgid "for the plug-in generated brush,"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:190
+msgid ""
+"\n"
+"it controls the shaft thickness."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:194 ArrowsCreator-0.2.py:396
+msgid "Nr of gradient, shaft"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:196 ArrowsCreator-0.2.py:397
+msgid "Gradient in shaft"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:197 ArrowsCreator-0.2.py:403
+msgid "Tail circle (radius,PX)"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:206
+msgid "the adjustment purpose can change"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:207
+msgid ""
+"\n"
+"according to the arrow type"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:215
+msgid "Assegai style"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:216
+msgid "Square cut the shaft"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:217
+msgid "Measuring arrow"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:218
+msgid "Notched arrow"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:220
+msgid "Labelling arrow"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:221
+msgid "Arrow with disk joint"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:222
+msgid "Arrow from the stroke path"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:233
+msgid "choice of arrow or segment type"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:237
+msgid "Invert"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:240
+msgid "inverse arrow direction"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:247
+msgid "waiting for anchors           "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:248
+msgid "edit"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:249
+msgid "open the path (try Back-Space)"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:250
+msgid "needs two anchors "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:251
+msgid "new localization"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:252
+msgid "anchor outside canvas!"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:253
+msgid "don't control that brush"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:254
+msgid "block by identical anchors"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:255
+msgid "completing the previous op."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:256
+msgid "won't work for that image!"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:272
+msgid "info and state of current op"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:280
+msgid "Next segment"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:283
+msgid "Mainly to produce a multi-segmented"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:284
+msgid ""
+"\n"
+"or many arrows on the previous layer"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:287
+msgid "Next arrow"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:290
+msgid "Create a new arrow layer"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:293
+msgid "Close"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:314 ArrowsCreator-0.2.py:850 ArrowsCreator-0.2.py:889
+msgid "layer to merge with"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:321
+msgid "ERROR: a missing %s is undermining this plug-in"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:322
+msgid ""
+".\n"
+"It has been auto terminated!"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:421
+msgid "image"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:426
+msgid "layer at least"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:431
+msgid "path at least"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:862
+msgid "  Next segment: click on the first anchor of the"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:863
+msgid ""
+"\n"
+"preceding segment (tail) and drag it where you want"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:864
+msgid ""
+"\n"
+"the new head to be, for consecutive segments."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:865
+msgid ""
+"\n"
+"The GIMP grid could be helpful to align many segments."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:866
+msgid ""
+"\n"
+"\n"
+"  N.B.: to produce a curve path 'click+drag' when placing "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:867
+msgid ""
+"\n"
+"an anchor or/and on the path after."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:868
+msgid ""
+"\n"
+"  Warning: keep initial image, don't change path layer or "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:869
+msgid ""
+"\n"
+"remove top arrow or segment layer while the plug-in is active.\n"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:895
+msgid "AC_arrow #"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:899
+msgid "  Next arrow: click on the anchors and drag them"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:900
+msgid ""
+"\n"
+"to the desired places. If you mistakenly create a new"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:901
+msgid ""
+"\n"
+"anchor, erase it with 'Back Space'."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:902
+msgid ""
+"\n"
+"  To have two anchors selected: 'Shift+click' on the one not"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:903
+msgid ""
+"\n"
+"selected (solid dot one) or click on the path, this permits a"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:904
+msgid ""
+"\n"
+"translation movement when you drag one anchor. One exits "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:905
+msgid ""
+"\n"
+"this state by 'Shift+click' on an anchor.\n"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:911
+msgid "   Message from ArrowsCreator:"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:912
+msgid ""
+"\n"
+"Goes to the next step only if the current layer is not"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:913
+msgid ""
+"\n"
+"empty. Empty layer wastes a lot of memory."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:914
+msgid ""
+"\n"
+"So put an arrow (segment) in or 'close'."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:934
+msgid "ERROR: an 'arrows creator' instance is already running!"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:948
+msgid "AC buffer"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1006
+msgid ""
+"MEASURING ARROW in %s: \n"
+"\n"
+" Nr    Size"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1007
+msgid ""
+"    Direction (clockwise +)\n"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1031
+msgid "ArrowsCreator configuration"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1040
+msgid "  To simplify the menu placement on the image menu-bar "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1041
+msgid ""
+"where\n"
+"we want it, It produces a file, after this it will no "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1042
+msgid ""
+"longer appear unless\n"
+"you erase '%s'."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1056
+msgid "menu path = <image>"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1063
+msgid " Edit this partial menu path to your liking"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1064
+msgid ""
+".\n"
+"If plug-in was registered before,"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1065
+msgid " change will take place, for example, after a 'touch' to %s"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1068
+msgid "plug-in name = "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1074
+msgid " Change or/and choose an accelerator "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1075
+msgid ""
+"key by inserting one or \n"
+"displacing an '_' before the accelerated letter."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1079
+msgid "default arrow style number = "
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1086
+msgid " Choose the beginning arrow style."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1093
+msgid "OK"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1095
+msgid "If instead this window is cancel with [x] the"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1096
+msgid " default will be used."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1115
+msgid "/Extensions/Plugins-Python/Tools"
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1115
+msgid "Arrows crea_tor..."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1145
+msgid "Draw interactive arrows based on a path with two anchors."
+msgstr ""
+
+#: ArrowsCreator-0.2.py:1146
+msgid ""
+"\n"
+"From: "
+msgstr ""
+
