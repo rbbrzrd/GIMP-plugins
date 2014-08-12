@@ -12,8 +12,11 @@
     2) plug-in auto quit if no layer or initial image;
     3) permitting internationalization in 'user' folders;
     4) only one launch at a time;
-    5) save the info for all layers in a text file;
-    6) display two others properties: position and type.
+    5) save the info for all layers in a text file.
+ August 2014 version 0.1:
+    1) an alternate way to select the active layer;
+    2) display two others properties: position and type.
+
    Make sense, fully, for 'XCF' file.
 ================================================================================
  You may use and distribute this plug-in under the terms of the GPL 2 or greater.
@@ -54,7 +57,7 @@ class LayerInfo(gtk.Window):
         self.drw = drw
         self.text = None
         self.layers = []        # layers object list for the image
-        self.pre_layers = []    # previous layers object list
+        self.pre_save = []    # previous names list for 'Save all' label
         self.names = []
         self.pre_names = []
         self.flag_paras = False # track 'Enter text' after a 'Save all'
@@ -146,14 +149,12 @@ class LayerInfo(gtk.Window):
             return False
         # change during the execution? Next to force auto quitting
         try:
-            if not stop: timeout_add(200, self.update, self)
-
             # Choose an active layer by plugin? self.img.active_layer = ?
             self.drw = self.img.active_layer
             #> layer name
             self.layers = get_all_layers(self.img)
-            name = pdb.gimp_layer_get_name(self.drw)
-            name = name.replace("\n", "/").replace("'", "\'")
+            self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
+            name = self.names[self.layers.index(self.drw)]
             #> layer offsets
             x, y = pdb.gimp_drawable_offsets(self.drw)
             #> layer position on the stack
@@ -181,60 +182,62 @@ class LayerInfo(gtk.Window):
                 # seems that parasite add a zero byte at the end which don't agree with 'gtk.label'
                 paras_text = paras_text.strip(chr(0))
                 flag = _("yes") # put parasite text in the entry field
-
-            # packing the layer info into text
-            txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s ")\
-                % (self.pos, max_pos, Type, name)\
-                +_("\n    Offsets(x,y) : (%d , %d) px    \n    Size(W,H) : %dx%d px  \n    Parasite : %d , %s")\
-                % (x, y, w , h, n, flag)
-
-            # update() in two parts:
-            # 1) the same text in the info list, update below the separator line
-            if self.text == txt:
-                # change colour of 'layer-info:' if new entry text
-                entry_txt = self.entry.get_text()
-                if entry_txt != paras_text:
-                    self.label1.set_label("<span foreground='dark red' background='white' >"+\
-                        " layer-info: "+"</span>")
-                    self.label1.set_use_markup(True)
-                else:
-                    self.label1.set_label("<span foreground='blue' background='white' >"+\
-                        ' layer-info: '+"</span>")
-                    self.label1.set_use_markup(True)
-
-                # the parasite content
-                if  nflag != 0: 
-                    self.entry.set_text(paras_text)
-                else: 
-                    self.entry.set_text('')
-
-                # reset label on 'Save' button after a save if there some change
-                if self.flag_save and (self.pre_layers != self.layers or self.flag_paras):
-                    self.btn.set_label(_("Save all"))
-                    self.pre_layers = self.layers
-                    self.flag_save = False
-                return
-
-            # 2) different text, displays it in the window...
-            self.label.set_label(txt)
-
-            # updating the combo_box?
-            self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
-            if self.pre_names != self.names:
-                # empty self.combo_box; next seems to work
-                for i in range(self.pre_max_pos): self.combo_box.remove_text(0)
-                # repopulate it
-                for nam in self.names: self.combo_box.append_text("   %s" %nam)
-                self.pre_max_pos = len(self.names)
-                self.pre_names = self.names
-            self.combo_box.set_active(self.pos-1)
-
-            self.text = txt
         except: 
             gimp.message(prob+_("\nIn update() 'except' case"))
             stop = True
             gtk.main_quit()
             return False
+
+        if not stop: timeout_add(200, self.update, self)
+
+        # packing the layer info into text
+        txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s ")\
+            % (self.pos, max_pos, Type, name)\
+            +_("\n    Offsets(x,y) : (%d , %d) px    \n    Size(W,H) : %dx%d px  \n    Parasite : %d , %s")\
+            % (x, y, w , h, n, flag)
+
+        # update() in two parts:
+        # 1) the same text in the info list
+        if self.text == txt:
+
+            # change colour of 'layer-info:' if new entry text
+            entry_txt = self.entry.get_text()
+            if entry_txt != paras_text:
+                self.label1.set_label("<span foreground='dark red' background='white' >"+\
+                    " layer-info: "+"</span>")
+                self.label1.set_use_markup(True)
+            else:
+                self.label1.set_label("<span foreground='blue' background='white' >"+\
+                    ' layer-info: '+"</span>")
+                self.label1.set_use_markup(True)
+
+            # reset label on 'Save' button after a save if there some change
+            if self.flag_save and (self.pre_save != self.names or self.flag_paras):
+                self.btn.set_label(_("Save all"))
+                self.pre_save = self.names
+                self.flag_save = False
+            return
+
+        # 2) different text, displays it in the window...
+        self.label.set_label(txt)
+
+        # the parasite content
+        if  nflag != 0: 
+            self.entry.set_text(paras_text)
+        else: 
+            self.entry.set_text('')
+
+        # updating the combo_box?
+        if self.pre_names != self.names:
+            # empty self.combo_box; next seems to work
+            for i in range(self.pre_max_pos): self.combo_box.remove_text(0)
+            # repopulate it
+            for nam in self.names: self.combo_box.append_text("   %s" %nam)
+            self.pre_max_pos = len(self.names)
+            self.pre_names = self.names
+        self.combo_box.set_active(self.pos-1)
+
+        self.text = txt
         return True
 
     def name_change(self, btn, data=None) :
@@ -284,10 +287,10 @@ class LayerInfo(gtk.Window):
                 children = ""
             # file the content for each layer and add the parasite info list
             n, paras = get_parasite_list(l)
-            if n == 0: point = ' .'
-            else: point = ' :'
+            if n == 0: dot = ' .'
+            else: dot = ' :'
             txt += _("%d%sname=\"%s\", Offsets=(%d , %d), WidthxHeight=%dx%d px,%s Parasite=%d%s\n")\
-                %(cr, tag, l.name.replace("\n", "/"), l.width, l.height, l.offsets[0], l.offsets[1],  children, n, point)
+                %(cr, tag, l.name.replace("\n", "/"), l.width, l.height, l.offsets[0], l.offsets[1],  children, n, dot)
             for p in paras:
                 paras_text = str(l.parasite_find(p))
                 paras_text = paras_text.strip(chr(0))
@@ -322,7 +325,7 @@ class LayerInfo(gtk.Window):
                 file_obj.close()
                 # for a file save ->
                 btn.set_label(_("Save all (done)"))
-                self.pre_layers = self.layers
+                self.pre_save = self.names
                 self.flag_save = True
             except:
                 gimp.message(_("ERROR in saving file: ")+filename)
