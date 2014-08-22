@@ -5,19 +5,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: info_layers-0.1\n"
-"POT-Creation-Date: 2014-08-10 08:54+EDT\n"
-"PO-Revision-Date: 2014-08-10 11:34-0400\n"
-"Last-Translator: robert <robert@localhost.localdomain>\n"
+"POT-Creation-Date: 2014-08-22 14:46+EDT\n"
+"PO-Revision-Date: 2014-08-22 15:03-0500\n"
+"Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 1.5.4\n"
-"Language: fr\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: info_layers.py:44
+#: info_layers.py:47
 msgid ""
 "\n"
 "Problem probably with the starting image!\n"
@@ -27,47 +27,47 @@ msgstr ""
 "Problème probablement avec l'image initiale!\n"
 " Fin auto. du greffon."
 
-#: info_layers.py:45
+#: info_layers.py:48
 msgid "GRAY"
 msgstr "GRIS"
 
-#: info_layers.py:45
+#: info_layers.py:48
 msgid "GRAYA"
 msgstr "GRISA"
 
-#: info_layers.py:45
+#: info_layers.py:48
 msgid "INDEXED"
 msgstr "INDEXÉ"
 
-#: info_layers.py:45
+#: info_layers.py:48
 msgid "INDEXEDA"
 msgstr "INDEXÉA"
 
-#: info_layers.py:45
+#: info_layers.py:48
 msgid "RGB"
 msgstr "RVB"
 
-#: info_layers.py:45
+#: info_layers.py:48
 msgid "RGBA"
 msgstr "RVBA"
 
-#: info_layers.py:69
+#: info_layers.py:72
 msgid "INFO on active layer"
 msgstr "INFOS sur calque actif"
 
-#: info_layers.py:76
+#: info_layers.py:79
 msgid "Choice of active layer by a click and\n"
 msgstr "Choix du calque actif par un clic et\n"
 
-#: info_layers.py:77
+#: info_layers.py:80
 msgid "selection here or in GIMP layer dialog."
 msgstr "une sélection ici ou dans le dialogue des calques de GIMP."
 
-#: info_layers.py:84
+#: info_layers.py:87
 msgid "Position: on the layer stack from the top."
 msgstr "Position: sur la pile de calques à partir du haut."
 
-#: info_layers.py:85
+#: info_layers.py:88
 msgid ""
 "\n"
 "Type: Single or Group and the base channels.\n"
@@ -75,44 +75,44 @@ msgstr ""
 "\n"
 "Type: Solo ou Groupe et les canaux de base.\n"
 
-#: info_layers.py:86
+#: info_layers.py:89
 msgid "Parasite: gives the number of layer parasite(s) attached\n"
 msgstr "Parasite: donne le nombre de parasite(s) avec ce calque\n"
 
-#: info_layers.py:87
+#: info_layers.py:90
 msgid "and if 'layer-info' is one or not."
 msgstr "et si 'layer-info' en est un ou non."
 
-#: info_layers.py:100
+#: info_layers.py:105
 msgid "Name of the layer parasite managed by this plug-in.\n"
 msgstr "Nom du parasite de calque géré par ce greffon.\n"
 
-#: info_layers.py:101
+#: info_layers.py:106
 msgid "If in blue: next field is the layer parasite text content or none.\n"
 msgstr ""
 "Si en bleu: le champ suivant affiche le contenu de ce parasite de calque.\n"
 
-#: info_layers.py:102
+#: info_layers.py:107
 msgid "If in red: an edited text not attached yet."
 msgstr "Si en rouge: un texte édité non encore attaché."
 
-#: info_layers.py:108
+#: info_layers.py:113
 msgid "Display text for layer parasite: 'layer-info'.\n"
 msgstr "Affiche le texte du parasite de calque: 'layer-info'.\n"
 
-#: info_layers.py:109
+#: info_layers.py:114
 msgid "It permits editing or creating that parasite."
 msgstr "Il permet l'édition ou la création de ce parasite."
 
-#: info_layers.py:115
+#: info_layers.py:119
 msgid "Enter text"
 msgstr "Entrer texte"
 
-#: info_layers.py:118
+#: info_layers.py:122
 msgid "Enter preceding text in layer parasite: 'layer-info'."
 msgstr "Entre le texte précédent dans le parasite de calque 'layer-info'."
 
-#: info_layers.py:119
+#: info_layers.py:123
 msgid ""
 "\n"
 "N.B.: a layer parasite is kept only in 'XCF' file."
@@ -120,15 +120,15 @@ msgstr ""
 "\n"
 "N.B.: un parasite de calque n'est conservé que dans les fichiers 'XCF'."
 
-#: info_layers.py:122 info_layers.py:213 info_layers.py:266
+#: info_layers.py:126 info_layers.py:217 info_layers.py:270
 msgid "Save all"
 msgstr "Sauver tout"
 
-#: info_layers.py:125
+#: info_layers.py:129
 msgid "Save the info for all layers in a text file."
 msgstr "Produit un fichier texte des infos sur tous les calques."
 
-#: info_layers.py:143
+#: info_layers.py:147
 msgid ""
 "\n"
 "In update() first 'if' case"
@@ -136,27 +136,35 @@ msgstr ""
 "\n"
 "Dans update(), premier 'if'"
 
-#: info_layers.py:168
+#: info_layers.py:170
 msgid "Group, "
 msgstr "Groupe, "
 
-#: info_layers.py:171
+#: info_layers.py:173
 msgid "Single text, "
 msgstr "Solo texte, "
 
-#: info_layers.py:172
+#: info_layers.py:174
 msgid "Single, "
 msgstr "Solo, "
 
-#: info_layers.py:178
+#: info_layers.py:180
 msgid "no"
 msgstr "non"
 
-#: info_layers.py:183
+#: info_layers.py:185
 msgid "yes"
 msgstr "oui"
 
-#: info_layers.py:186
+#: info_layers.py:187
+msgid ""
+"\n"
+"In update() 'except' case"
+msgstr ""
+"\n"
+"Dans update(), cas 'except'"
+
+#: info_layers.py:195
 msgid ""
 "    Position : %d of %d  \n"
 "    Type : %s  \n"
@@ -166,51 +174,49 @@ msgstr ""
 "    Type : %s  \n"
 "    Nom : %s"
 
-#: info_layers.py:188
+#: info_layers.py:197
 msgid ""
 "\n"
 "    Offsets(x,y) : (%d , %d) px    \n"
-"    Size(W,H) : %dx%d px  \n"
-"    Parasite : %d , %s"
+"    Size(W*H) : %d*%d px"
 msgstr ""
 "\n"
 "    Décalage(x,y) : (%d , %d) px    \n"
-"    Dimension(L,H) : %dx%d px  \n"
+"    Dimension(L*H) : %d*%d px"
+
+#: info_layers.py:198
+msgid ""
+"  \n"
+"    Parasite : %d , %s"
+msgstr ""
+"  \n"
 "    Parasite : %d , %s"
 
-#: info_layers.py:234
-msgid ""
-"\n"
-"In update() 'except' case"
-msgstr ""
-"\n"
-"Dans update(), cas 'except'"
-
-#: info_layers.py:264
+#: info_layers.py:268
 msgid ") Group "
 msgstr ") Groupe "
 
-#: info_layers.py:264
+#: info_layers.py:268
 msgid ") Single "
 msgstr ") Solo "
 
-#: info_layers.py:268
+#: info_layers.py:272
 msgid "# An info layers file for '%s' in GIMP%s.\n"
 msgstr "# Fichier des infos sur les calques pour '%s' dans GIMP%s.\n"
 
-#: info_layers.py:269
+#: info_layers.py:273
 msgid "# Base colour type is '%s' for this image of size = %dx%d px.\n"
 msgstr ""
 "# La base des couleurs est '%s' pour cette image de dimension = %dx%d px.\n"
 
-#: info_layers.py:271
+#: info_layers.py:275
 msgid ""
 "# The classification 'Group' means has child(s) while 'Single' has not.\n"
 msgstr ""
 "# La classification 'Groupe' signifie a descendant(s), c'est faux pour "
 "'Solo'.\n"
 
-#: info_layers.py:272
+#: info_layers.py:276
 msgid ""
 "# Note: in text variable the newline have been replaced by '/'.\n"
 "\n"
@@ -219,59 +225,63 @@ msgstr ""
 "par '/'.\n"
 "\n"
 
-#: info_layers.py:280
+#: info_layers.py:284
 msgid " Childs=%s,"
 msgstr " Descendants=%s,"
 
-#: info_layers.py:289
+#: info_layers.py:293
 msgid ""
-"%d%sname=\"%s\", Offsets=(%d , %d), WidthxHeight=%dx%d px,%s Parasite=%d%s\n"
+"%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
 msgstr ""
-"%d%snom=\"%s\", Décalage=(%d , %d), LargeurxHauteur=%dx%d px,%s Parasite=%d"
+"%d%snom=\"%s\", Décalage=(%d , %d), Largeur*Hauteur=%d*%d px,%s Parasite=%d"
 "%s\n"
 
-#: info_layers.py:300
+#: info_layers.py:305
 msgid "User file selection"
 msgstr "Sélection du fichier par l'utilisateur"
 
-#: info_layers.py:305
+#: info_layers.py:310
 msgid ""
 "Suggestion: you can use a folder like '.../Images/layouts/' for this file."
 msgstr ""
 "Suggestion: vous pouvez choisir ou créer un dossier comme '.../Images/"
 "dispositions/'."
 
-#: info_layers.py:314
+#: info_layers.py:319
 msgid "INFO: save was aborted by the user"
 msgstr "INFO: la sauvegarde a été avorté par l'utilisateur"
 
-#: info_layers.py:324
+#: info_layers.py:329
 msgid "Save all (done)"
 msgstr "Sauver (fait)"
 
-#: info_layers.py:328
+#: info_layers.py:333
 msgid "ERROR in saving file: "
 msgstr "ERREUR durant la sauvegarde:"
 
-#: info_layers.py:329
+#: info_layers.py:334
 msgid "ERROR: no file-name given!"
 msgstr "ERREUR: pas de nom de fichier!"
 
-#: info_layers.py:361
+#: info_layers.py:366
 msgid "WARNING: an 'info_layers' instance is already running!"
 msgstr "AVERTISSEMENT: 'info_layers.py' est déjà en fonction!"
 
-#: info_layers.py:373
-msgid ""
-"Display actual infos on the active layer, managed a 'layer-info' parasite "
-"and an all info file.\n"
-"From: "
+#: info_layers.py:378
+msgid "Display actual infos on the active layer, manage a 'layer-info' "
 msgstr ""
 "Affiche les infos actuelles du calque actif, gère le parasite de calque "
-"'layer-info' et un fichier sur les infos de tous les calques.\n"
+"'layer-info' "
+
+#: info_layers.py:379
+msgid ""
+"parasite and an all info file.\n"
+"From: "
+msgstr ""
+" parasite et un fichier sur les infos de tous les calques.\n"
 "De: "
 
-#: info_layers.py:374
+#: info_layers.py:380
 msgid ""
 "Display a window with live infos on the selected layer; \n"
 "controls are "
@@ -279,18 +289,19 @@ msgstr ""
 "Affiche une fenêtre avec les informations vives sur le calque sélectionné; \n"
 "les controles sont"
 
-#: info_layers.py:375
-msgid ""
-"a ComboBox for selection, 'Enter text' for parasite and 'Save all' for file."
+#: info_layers.py:381
+msgid "a ComboBox for layer name selection, 'Enter text' in a layer parasite"
 msgstr ""
-"un 'ComboBox' pour sélectionner, 'Entrer texte' pour le parasite et 'Sauver "
-"tout' pour le fichier."
+"un 'ComboBox' pour sélectionner un calque, 'Entrer texte' pour le parasite"
 
-#: info_layers.py:379
+#: info_layers.py:382
+msgid " and 'Save all' in a text file."
+msgstr " et 'Sauver tout' dans un fichier texte."
+
+#: info_layers.py:386
 msgid "Layer-info..."
 msgstr "Informations-calque..."
 
-#: info_layers.py:387
+#: info_layers.py:394
 msgid "/Extensions/Plugins-Python/Layer"
 msgstr "/Extensions/Plugins-Python/Calque"
-
