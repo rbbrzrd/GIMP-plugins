@@ -57,7 +57,7 @@ class LayerInfo(gtk.Window):
         self.drw = drw
         self.text = None
         self.layers = []        # layers object list for the image
-        self.pre_save = []    # previous names list for 'Save all' label
+        self.pre_save = []      # previous names list for 'Save all' label
         self.names = []
         self.pre_names = []
         self.flag_paras = False # track 'Enter text' after a 'Save all'
@@ -95,7 +95,9 @@ class LayerInfo(gtk.Window):
 
         # for viewing or adding explanations, in a parasite
 
-        hbox = gtk.HBox(False, 0)
+        table = gtk.Table(rows=1, columns=2, homogeneous=False)
+        table.set_col_spacings(3)
+        vbox.add(table)
         # label for the managed parasite 
         self.label1 = gtk.Label()
         self.label1.set_use_markup(True)
@@ -103,15 +105,14 @@ class LayerInfo(gtk.Window):
         self.label1.set_tooltip_text(_("Name of the layer parasite managed by this plug-in.\n")\
             +_("If in blue: next field is the layer parasite text content or none.\n")\
             +_("If in red: an edited text not attached yet."))
-        hbox.add(self.label1)
+        table.attach(self.label1, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0)
 
         # text in or should be in the managed parasite
         self.entry = gtk.Entry(max=0)
         self.entry.set_has_tooltip(True)
         self.entry.set_tooltip_text(_("Display text for layer parasite: 'layer-info'.\n")\
             +_("It permits editing or creating that parasite."))
-        hbox.add(self.entry)
-        vbox.add(hbox)
+        table.attach(self.entry, 1, 2, 0, 1)
 
         # add action buttons
         hbox = gtk.HBox(homogeneous=False, spacing=6)
@@ -161,10 +162,10 @@ class LayerInfo(gtk.Window):
             self.pos = self.layers.index(self.drw) +1
             max_pos = len(self.layers)
             #> layer size
-            h = pdb.gimp_drawable_height(self.drw)
-            w = pdb.gimp_drawable_width(self.drw)
+            h = self.drw.height
+            w = self.drw.width
             #> layer type
-            _type = pdb.gimp_drawable_type(self.drw)
+            _type = self.drw.type
             # Group or Single + ?
             if hasattr(self.drw,"layers"): Type = _("Group, ")+enum_type[_type]
             else: 
@@ -179,7 +180,7 @@ class LayerInfo(gtk.Window):
                 flag = _('no')
             else:
                 paras_text = str(self.drw.parasite_find('layer-info'))
-                # seems that parasite add a zero byte at the end which don't agree with 'gtk.label'
+                # parasite add a zero byte at the end which don't agree with 'gtk.label'
                 paras_text = paras_text.strip(chr(0))
                 flag = _("yes") # put parasite text in the entry field
         except: 
@@ -193,8 +194,8 @@ class LayerInfo(gtk.Window):
         # packing the layer info into text
         txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s ")\
             % (self.pos, max_pos, Type, name)\
-            +_("\n    Offsets(x,y) : (%d , %d) px    \n    Size(W,H) : %dx%d px  \n    Parasite : %d , %s")\
-            % (x, y, w , h, n, flag)
+            +_("\n    Offsets(x,y) : (%d , %d) px    \n    Size(W*H) : %d*%d px")\
+             % (x, y, w , h) +_("  \n    Parasite : %d , %s")% (n, flag)
 
         # update() in two parts:
         # 1) the same text in the info list
@@ -275,8 +276,8 @@ class LayerInfo(gtk.Window):
             +_("# Note: in text variable the newline have been replaced by '/'.\n\n")
 
         cr = 1  # the position of the layer
-        for l in self.layers:    # all the layers
-            if version >= (2, 8, 0): childs = l.children
+        for L in self.layers:    # all the layers
+            if version >= (2, 8, 0): childs = L.children
             else: childs = None
             if childs: 
                 tag = tags[0]
@@ -286,13 +287,14 @@ class LayerInfo(gtk.Window):
                 tag = tags[1]
                 children = ""
             # file the content for each layer and add the parasite info list
-            n, paras = get_parasite_list(l)
+            n, paras = get_parasite_list(L)
             if n == 0: dot = ' .'
             else: dot = ' :'
-            txt += _("%d%sname=\"%s\", Offsets=(%d , %d), WidthxHeight=%dx%d px,%s Parasite=%d%s\n")\
-                %(cr, tag, l.name.replace("\n", "/"), l.width, l.height, l.offsets[0], l.offsets[1],  children, n, dot)
+            txt += _("%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n")\
+                %(cr, tag, L.name.replace("\n", "/"), L.width, L.height, L.offsets[0], L.offsets[1],\
+                children, n, dot)
             for p in paras:
-                paras_text = str(l.parasite_find(p))
+                paras_text = str(L.parasite_find(p))
                 paras_text = paras_text.strip(chr(0))
                 paras_text = paras_text.replace("\n", "/")
                 txt.rstrip()                
@@ -373,14 +375,16 @@ def info_layers (img, drw):
 
 register(
         'info_layers',
-        _("Display actual infos on the active layer, managed a 'layer-info' parasite and an all info file.\nFrom: ")+fi,
+        _("Display actual infos on the active layer, manage a 'layer-info' ")\
+            +_("parasite and an all info file.\nFrom: ")+fi,
         _("Display a window with live infos on the selected layer; \ncontrols are ")\
-            +_("a ComboBox for selection, 'Enter text' for parasite and 'Save all' for file."),
+            +_("a ComboBox for layer name selection, 'Enter text' in a layer parasite")\
+            +_(" and 'Save all' in a text file."),
         'David Marquez de la Cruz, R. Brizard',
-        '(GPL 2)',
+        '((c) GPL 2, R. Brizard)',
         '2014',
         _("Layer-info..."),
-        '*',  # imagetypes
+        '*',  # any imagetypes
         [
           (PF_IMAGE, "img", "IMAGE:", None),
           (PF_DRAWABLE, "drw", "DRAWABLE:", None)
