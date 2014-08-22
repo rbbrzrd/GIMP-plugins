@@ -291,7 +291,7 @@ class LayerInfo(gtk.Window):
             if n == 0: dot = ' .'
             else: dot = ' :'
             txt += _("%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n")\
-                %(cr, tag, L.name.replace("\n", "/"), L.width, L.height, L.offsets[0], L.offsets[1],\
+                %(cr, tag, L.name.replace("\n", "/"), L.offsets[0], L.offsets[1], L.width, L.height,\
                 children, n, dot)
             for p in paras:
                 paras_text = str(L.parasite_find(p))
