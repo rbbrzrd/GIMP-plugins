@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2014-08-22 14:46+EDT\n"
+"POT-Creation-Date: 2014-08-23 00:13+EDT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: info_layers.py:105
 msgid ""
-"Name of the layer parasite managed by this plug-in.\n"
+"Name of the layer parasite manage by this plug-in.\n"
 msgstr ""
 
 #: info_layers.py:106
@@ -123,7 +123,7 @@ msgstr ""
 msgid "Save the info for all layers in a text file."
 msgstr ""
 
-#: info_layers.py:147
+#: info_layers.py:148
 msgid ""
 "\n"
 "In update() first 'if' case"
@@ -149,7 +149,7 @@ msgstr ""
 msgid "yes"
 msgstr ""
 
-#: info_layers.py:187
+#: info_layers.py:188
 msgid ""
 "\n"
 "In update() 'except' case"
@@ -176,11 +176,11 @@ msgid ""
 msgstr ""
 
 #: info_layers.py:268
-msgid ") Group "
+msgid ") Group"
 msgstr ""
 
 #: info_layers.py:268
-msgid ") Single "
+msgid ") Single"
 msgstr ""
 
 #: info_layers.py:272
@@ -210,7 +210,7 @@ msgstr ""
 
 #: info_layers.py:293
 msgid ""
-"%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
+"%d%s name=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
 msgstr ""
 
 #: info_layers.py:305
@@ -252,9 +252,7 @@ msgid ""
 msgstr ""
 
 #: info_layers.py:380
-msgid ""
-"Display a window with live infos on the selected layer; \n"
-"controls are "
+msgid "Display a window with live infos on the selected layer; the controls are "
 msgstr ""
 
 #: info_layers.py:381

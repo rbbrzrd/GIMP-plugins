@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: info_layers-0.1\n"
-"POT-Creation-Date: 2014-08-22 14:46+EDT\n"
-"PO-Revision-Date: 2014-08-22 15:05-0500\n"
+"POT-Creation-Date: 2014-08-23 00:13+EDT\n"
+"PO-Revision-Date: 2014-08-23 00:20-0500\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en\n"
@@ -83,8 +83,8 @@ msgid "and if 'layer-info' is one or not."
 msgstr "and if 'layer-info' is one or not."
 
 #: info_layers.py:105
-msgid "Name of the layer parasite managed by this plug-in.\n"
-msgstr "Name of the layer parasite managed by this plug-in.\n"
+msgid "Name of the layer parasite manage by this plug-in.\n"
+msgstr "Name of the layer parasite manage by this plug-in.\n"
 
 #: info_layers.py:106
 msgid "If in blue: next field is the layer parasite text content or none.\n"
@@ -126,7 +126,7 @@ msgstr "Save all"
 msgid "Save the info for all layers in a text file."
 msgstr "Save the info for all layers in a text file."
 
-#: info_layers.py:147
+#: info_layers.py:148
 msgid ""
 "\n"
 "In update() first 'if' case"
@@ -154,7 +154,7 @@ msgstr "no"
 msgid "yes"
 msgstr "yes"
 
-#: info_layers.py:187
+#: info_layers.py:188
 msgid ""
 "\n"
 "In update() 'except' case"
@@ -191,12 +191,12 @@ msgstr ""
 "    Parasite : %d , %s"
 
 #: info_layers.py:268
-msgid ") Group "
-msgstr ") Group "
+msgid ") Group"
+msgstr ") Group"
 
 #: info_layers.py:268
-msgid ") Single "
-msgstr ") Single "
+msgid ") Single"
+msgstr ") Single"
 
 #: info_layers.py:272
 msgid "# An info layers file for '%s' in GIMP%s.\n"
@@ -226,9 +226,9 @@ msgstr " Childs=%s,"
 
 #: info_layers.py:293
 msgid ""
-"%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
+"%d%s name=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
 msgstr ""
-"%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
+"%d%s name=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
 
 #: info_layers.py:305
 msgid "User file selection"
@@ -274,11 +274,9 @@ msgstr ""
 
 #: info_layers.py:380
 msgid ""
-"Display a window with live infos on the selected layer; \n"
-"controls are "
+"Display a window with live infos on the selected layer; the controls are "
 msgstr ""
-"Display a window with live infos on the selected layer; \n"
-"controls are "
+"Display a window with live infos on the selected layer; the controls are "
 
 #: info_layers.py:381
 msgid "a ComboBox for layer name selection, 'Enter text' in a layer parasite"

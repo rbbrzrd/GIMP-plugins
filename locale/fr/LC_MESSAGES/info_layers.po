@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: info_layers-0.1\n"
-"POT-Creation-Date: 2014-08-22 14:46+EDT\n"
-"PO-Revision-Date: 2014-08-22 15:03-0500\n"
+"POT-Creation-Date: 2014-08-23 00:13+EDT\n"
+"PO-Revision-Date: 2014-08-23 00:17-0500\n"
 "Last-Translator: \n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fr\n"
@@ -84,8 +84,8 @@ msgid "and if 'layer-info' is one or not."
 msgstr "et si 'layer-info' en est un ou non."
 
 #: info_layers.py:105
-msgid "Name of the layer parasite managed by this plug-in.\n"
-msgstr "Nom du parasite de calque géré par ce greffon.\n"
+msgid "Name of the layer parasite manage by this plug-in.\n"
+msgstr "Nom du parasite de calque gérer par ce greffon.\n"
 
 #: info_layers.py:106
 msgid "If in blue: next field is the layer parasite text content or none.\n"
@@ -128,7 +128,7 @@ msgstr "Sauver tout"
 msgid "Save the info for all layers in a text file."
 msgstr "Produit un fichier texte des infos sur tous les calques."
 
-#: info_layers.py:147
+#: info_layers.py:148
 msgid ""
 "\n"
 "In update() first 'if' case"
@@ -156,7 +156,7 @@ msgstr "non"
 msgid "yes"
 msgstr "oui"
 
-#: info_layers.py:187
+#: info_layers.py:188
 msgid ""
 "\n"
 "In update() 'except' case"
@@ -193,12 +193,12 @@ msgstr ""
 "    Parasite : %d , %s"
 
 #: info_layers.py:268
-msgid ") Group "
-msgstr ") Groupe "
+msgid ") Group"
+msgstr ") Groupe"
 
 #: info_layers.py:268
-msgid ") Single "
-msgstr ") Solo "
+msgid ") Single"
+msgstr ") Solo"
 
 #: info_layers.py:272
 msgid "# An info layers file for '%s' in GIMP%s.\n"
@@ -231,9 +231,9 @@ msgstr " Descendants=%s,"
 
 #: info_layers.py:293
 msgid ""
-"%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
+"%d%s name=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n"
 msgstr ""
-"%d%snom=\"%s\", Décalage=(%d , %d), Largeur*Hauteur=%d*%d px,%s Parasite=%d"
+"%d%s nom=\"%s\", Décalage=(%d , %d), Largeur*Hauteur=%d*%d px,%s Parasite=%d"
 "%s\n"
 
 #: info_layers.py:305
@@ -278,16 +278,15 @@ msgid ""
 "parasite and an all info file.\n"
 "From: "
 msgstr ""
-" parasite et un fichier sur les infos de tous les calques.\n"
+"et un fichier sur les infos de tous les calques.\n"
 "De: "
 
 #: info_layers.py:380
 msgid ""
-"Display a window with live infos on the selected layer; \n"
-"controls are "
+"Display a window with live infos on the selected layer; the controls are "
 msgstr ""
-"Affiche une fenêtre avec les informations vives sur le calque sélectionné; \n"
-"les controles sont"
+"Affiche une fenêtre avec les informations vives sur le calque sélectionné; "
+"les contrôles sont "
 
 #: info_layers.py:381
 msgid "a ComboBox for layer name selection, 'Enter text' in a layer parasite"
