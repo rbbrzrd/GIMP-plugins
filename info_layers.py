@@ -43,7 +43,7 @@ fi = __file__
 locale_directory = os.path.join(os.path.dirname(os.path.abspath(fi)), 'locale')
 gettext.install( "info_layers", locale_directory, unicode=True )
 
-stop = False
+stop = 0 #False
 prob = _("\nProblem probably with the starting image!\n  Plug-in has auto quitted.")
 enum_type = [_('RGB'), _('RGBA'), _('GRAY'), _('GRAYA'), _('INDEXED'), _('INDEXEDA')]
 version = gimp.version
@@ -102,7 +102,7 @@ class LayerInfo(gtk.Window):
         self.label1 = gtk.Label()
         self.label1.set_use_markup(True)
         self.label1.set_has_tooltip(True)
-        self.label1.set_tooltip_text(_("Name of the layer parasite managed by this plug-in.\n")\
+        self.label1.set_tooltip_text(_("Name of the layer parasite manage by this plug-in.\n")\
             +_("If in blue: next field is the layer parasite text content or none.\n")\
             +_("If in red: an edited text not attached yet."))
         table.attach(self.label1, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0)
@@ -143,9 +143,9 @@ class LayerInfo(gtk.Window):
         global stop, prob
 
         img_list = gimp.image_list()
-        if (self.img not in img_list) or (len(self.img.layers) == 0) or stop:
-            gimp.message(prob+_("\nIn update() first 'if' case"))
-            stop = True
+        if (self.img not in img_list) or (len(self.img.layers) == 0) or stop > 0:
+            stop += 1
+            if stop == 1: gimp.message(prob+_("\nIn update() first 'if' case"))
             gtk.main_quit()
             return False
         # change during the execution? Next to force auto quitting
@@ -157,7 +157,7 @@ class LayerInfo(gtk.Window):
             self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
             name = self.names[self.layers.index(self.drw)]
             #> layer offsets
-            x, y = pdb.gimp_drawable_offsets(self.drw)
+            x, y = self.drw.offsets
             #> layer position on the stack
             self.pos = self.layers.index(self.drw) +1
             max_pos = len(self.layers)
@@ -184,12 +184,12 @@ class LayerInfo(gtk.Window):
                 paras_text = paras_text.strip(chr(0))
                 flag = _("yes") # put parasite text in the entry field
         except: 
-            gimp.message(prob+_("\nIn update() 'except' case"))
-            stop = True
+            stop += 1
+            if stop == 1: gimp.message(prob+_("\nIn update() 'except' case"))
             gtk.main_quit()
             return False
 
-        if not stop: timeout_add(200, self.update, self)
+        if stop == 0: timeout_add(200, self.update, self)
 
         # packing the layer info into text
         txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s ")\
@@ -265,7 +265,7 @@ class LayerInfo(gtk.Window):
         
         # for a XML file see  'Python-Fu #3 - Working with Layers and XML in Python-Fu'
         filename = ""
-        tags = (_(') Group '), _(') Single '))
+        tags = (_(') Group'), _(') Single'))
 
         btn.set_label(_("Save all"))    # to reflect prob. if saving more than once
         # start building our text file first by an introduction
@@ -290,7 +290,7 @@ class LayerInfo(gtk.Window):
             n, paras = get_parasite_list(L)
             if n == 0: dot = ' .'
             else: dot = ' :'
-            txt += _("%d%sname=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n")\
+            txt += _("%d%s name=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n")\
                 %(cr, tag, L.name.replace("\n", "/"), L.offsets[0], L.offsets[1], L.width, L.height,\
                 children, n, dot)
             for p in paras:
@@ -371,13 +371,13 @@ def info_layers (img, drw):
         gtk.main()
 
         shelf['info_layers'] = False
-        stop = True
+        stop += 1
 
 register(
         'info_layers',
         _("Display actual infos on the active layer, manage a 'layer-info' ")\
             +_("parasite and an all info file.\nFrom: ")+fi,
-        _("Display a window with live infos on the selected layer; \ncontrols are ")\
+        _("Display a window with live infos on the selected layer; the controls are ")\
             +_("a ComboBox for layer name selection, 'Enter text' in a layer parasite")\
             +_(" and 'Save all' in a text file."),
         'David Marquez de la Cruz, R. Brizard',
