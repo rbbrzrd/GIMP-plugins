@@ -395,4 +395,4 @@ register(
         domain=( "info_layers", locale_directory)
         )
 
-main()
+main() 
