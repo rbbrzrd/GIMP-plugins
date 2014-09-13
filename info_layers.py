@@ -15,7 +15,8 @@
     5) save the info for all layers in a text file.
  August 2014 version 0.1:
     1) an alternate way to select the active layer;
-    2) display two others properties: position and type.
+    2) display two others properties: position and type;
+    3) harmonizing between info in display and in text file.
 
    Make sense, fully, for 'XCF' file.
 ================================================================================
@@ -43,9 +44,10 @@ fi = __file__
 locale_directory = os.path.join(os.path.dirname(os.path.abspath(fi)), 'locale')
 gettext.install( "info_layers", locale_directory, unicode=True )
 
-stop = 0 #False
+stop = 0         # equivalent to False
 prob = _("\nProblem probably with the starting image!\n  Plug-in has auto quitted.")
 enum_type = [_('RGB'), _('RGBA'), _('GRAY'), _('GRAYA'), _('INDEXED'), _('INDEXEDA')]
+start_cntr = 0   # counter for different text displayed
 version = gimp.version
 start_minver = 6 # minor version of the previous GIMP-2.6
 
@@ -55,13 +57,20 @@ class LayerInfo(gtk.Window):
     def __init__ (self, img, drw, *args):
         self.img = img
         self.drw = drw
-        self.text = None
+        self.txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s  \n    "\
+            +"Offsets(x,y) : (%d , %d) px    \n    Size(W*H) : %d*%d px  \n    "\
+            +"Parasite : %d , %s")
+
+        self.val = []           # previous 'layer_val'
         self.layers = []        # layers object list for the image
         self.pre_save = []      # previous names list for 'Save all' label
         self.names = []
         self.pre_names = []
+
         self.flag_paras = False # track 'Enter text' after a 'Save all'
         self.flag_save = False  # track 'Save all (done)'
+        self.flag_names = True  # track change in layer names
+
         self.w, self.h = 0, 0
         self.pos, self.pre_max_pos = 0, 0
         
@@ -116,7 +125,7 @@ class LayerInfo(gtk.Window):
 
         # add action buttons
         hbox = gtk.HBox(homogeneous=False, spacing=6)
-        btn = gtk.Button(_("Enter text"))
+        btn = gtk.Button(_("Enter text"),  gtk.STOCK_EDIT)
         btn.connect("pressed", self.add_info)
         btn.set_has_tooltip(True)
         btn.set_tooltip_text(_("Enter preceding text in layer parasite: 'layer-info'.")\
@@ -140,7 +149,7 @@ class LayerInfo(gtk.Window):
     def update(self, *args):
         """ update the info in the GUI """
 
-        global stop, prob
+        global stop, prob, start_cntr
 
         img_list = gimp.image_list()
         if (self.img not in img_list) or (len(self.img.layers) == 0) or stop > 0:
@@ -153,9 +162,10 @@ class LayerInfo(gtk.Window):
             # Choose an active layer by plugin? self.img.active_layer = ?
             self.drw = self.img.active_layer
             #> layer name
-            self.layers = get_all_layers(self.img)
-            self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
-            name = self.names[self.layers.index(self.drw)]
+            if self.flag_names : 
+                self.layers = get_all_layers(self.img)
+                self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
+            name = self.drw.name
             #> layer offsets
             x, y = self.drw.offsets
             #> layer position on the stack
@@ -174,42 +184,39 @@ class LayerInfo(gtk.Window):
                 else: Type = _("Single, ")+enum_type[_type]
             #> layer parasite
             n, parasites = get_parasite_list(self.drw)
-            nflag = parasites.count('layer-info')
-            if  nflag == 0:
-                paras_text = ''
-                flag = _('no')
-            else:
-                paras_text = str(self.drw.parasite_find('layer-info'))
-                # parasite add a zero byte at the end which don't agree with 'gtk.label'
-                paras_text = paras_text.strip(chr(0))
-                flag = _("yes") # put parasite text in the entry field
         except: 
             stop += 1
             if stop == 1: gimp.message(prob+_("\nIn update() 'except' case"))
             gtk.main_quit()
             return False
 
+        nflag = parasites.count('layer-info')
+        if  nflag == 0:
+            paras_text = ''
+            flag = _('no')
+        else:
+            paras_text = str(self.drw.parasite_find('layer-info'))
+            # parasite add a zero byte at the end which don't agree with 'gtk.label'
+            paras_text = paras_text.strip(chr(0))
+            flag = _("yes") # put parasite text in the entry field
         if stop == 0: timeout_add(200, self.update, self)
 
-        # packing the layer info into text
-        txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s ")\
-            % (self.pos, max_pos, Type, name)\
-            +_("\n    Offsets(x,y) : (%d , %d) px    \n    Size(W*H) : %d*%d px")\
-             % (x, y, w , h) +_("  \n    Parasite : %d , %s")% (n, flag)
+        layer_val = [self.pos, max_pos, Type, name, x, y, w , h, n, flag]
 
         # update() in two parts:
-        # 1) the same text in the info list
-        if self.text == txt:
+        # 1) the same info list
+        if self.val == layer_val:
 
             # change colour of 'layer-info:' if new entry text
             entry_txt = self.entry.get_text()
-            if entry_txt != paras_text:
-                self.label1.set_label("<span foreground='dark red' background='white' >"+\
-                    " layer-info: "+"</span>")
+            if entry_txt != paras_text and pango.ATTR_FOREGROUND != 'dark red':
+                # seems to diminish the ballonning with time of the refresh
+                self.label1.set_label("<span foreground='dark red' background='white' >"\
+                    +" layer-info: "+"</span>")
                 self.label1.set_use_markup(True)
-            else:
-                self.label1.set_label("<span foreground='blue' background='white' >"+\
-                    ' layer-info: '+"</span>")
+            elif entry_txt == paras_text and pango.ATTR_FOREGROUND != 'blue':
+                self.label1.set_label("<span foreground='blue' background='white' >"\
+                    +' layer-info: '+"</span>")
                 self.label1.set_use_markup(True)
 
             # reset label on 'Save' button after a save if there some change
@@ -219,7 +226,9 @@ class LayerInfo(gtk.Window):
                 self.flag_save = False
             return
 
-        # 2) different text, displays it in the window...
+        # 2) different info, displays it in the window...
+        # packing the layer info into text
+        txt = self.txt%tuple(layer_val)
         self.label.set_label(txt)
 
         # the parasite content
@@ -238,15 +247,26 @@ class LayerInfo(gtk.Window):
             self.pre_names = self.names
         self.combo_box.set_active(self.pos-1)
 
-        self.text = txt
+        self.val = layer_val
+        start_cntr += 1
+        if start_cntr == 5 : self.label.set_has_tooltip(False)
         return True
 
     def name_change(self, btn, data=None) :
-        pdb.gimp_image_set_active_layer(self.img, self.layers[btn.get_active()])
-        pdb.gimp_displays_flush()
+        """
+        Active layer by the first combo_box
+        """
+        if self.val : 
+            pdb.gimp_image_set_active_layer(self.img, self.layers[btn.get_active()])
+            pdb.gimp_displays_flush()
+            self.combo_box.set_has_tooltip(False)
+            self.flag_names = False
         return
 
     def add_info(self, btn, data=None) :
+        """
+        Text into the layer parasite 'layer-info'
+        """
         paras_text = self.entry.get_text()
         self.drw.attach_new_parasite('layer-info', 1, paras_text)
         # to indicate a save text in the parasite
