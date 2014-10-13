@@ -2,12 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-# (c) 2012 by David Maquez de la Cruz (at http://registry.gimp.org/node/26317)
-# TODO: Check if it's possible to show info because sometimes
-# there is an error into the error console, i.e when there is no layer
+# Inspired by David Maquez de la Cruz (at http://registry.gimp.org/node/26317) (c) 2012
+   seems based on 'ratio_info.py' from Joao S. Bueno in 2007.
  June 2014, by Robert Brizard:
-   seems based on 'ratio_info.py' from Joao S. Bueno in 2007,
-   the additions are: 
     1) adding text explanations (date, etc...), about the layer, in a layer parasite;
     2) plug-in auto quit if no layer or initial image;
     3) permitting internationalization in 'user' folders;
@@ -17,6 +14,9 @@
     1) an alternate way to select the active layer;
     2) display two others properties: position and type;
     3) harmonizing between info in display and in text file.
+ October 2014 version 0.2 (goal more staying power):
+    1) exchange editing in 'layer dialog' and live info for simplifying reading layer 
+        like a 'PDF' convert to a 'XCF' and more layers in one session. 
 
    Make sense, fully, for 'XCF' file.
 ================================================================================
@@ -24,10 +24,8 @@
  Get the license text at "http://www.gnu.org/licenses/" 
 """
 
-import gtk, glob, pango
-import os, gettext
-from gobject import timeout_add
-#from collections import namedtuple
+import gtk, pango
+import os, sys, gettext
 
 try:
     from gimpfu import *
@@ -44,51 +42,58 @@ fi = __file__
 locale_directory = os.path.join(os.path.dirname(os.path.abspath(fi)), 'locale')
 gettext.install( "info_layers", locale_directory, unicode=True )
 
-stop = 0         # equivalent to False
-prob = _("\nProblem probably with the starting image!\n  Plug-in has auto quitted.")
 enum_type = [_('RGB'), _('RGBA'), _('GRAY'), _('GRAYA'), _('INDEXED'), _('INDEXEDA')]
-start_cntr = 0   # counter for different text displayed
+prob = _("ERROR: the layer object list isn't the same!\n  Plug-in has auto quitted.")
+# store the initial layer visibility state to restore it
+layer_view = []
+layers = []
+
 version = gimp.version
 start_minver = 6 # minor version of the previous GIMP-2.6
 
 ### GUI integration ############################################################
 
-class LayerInfo(gtk.Window):
+class LayerViewer(gtk.Window):
     def __init__ (self, img, drw, *args):
+        global layer_view, layers
         self.img = img
         self.drw = drw
-        self.txt = _("    Position : %d of %d  \n    Type : %s  \n    Name : %s  \n    "\
-            +"Offsets(x,y) : (%d , %d) px    \n    Size(W*H) : %d*%d px  \n    "\
-            +"Parasite : %d , %s")
 
-        self.val = []           # previous 'layer_val'
-        self.layers = []        # layers object list for the image
-        self.pre_save = []      # previous names list for 'Save all' label
-        self.names = []
-        self.pre_names = []
+        self.txt = _("    Type : %s  \n    Name : %s  \n    Offsets(x,y) : (%d , %d) px")\
+            +_("    \n    Size(W*H) : %d*%d px  \n    Parasite : %d , %s")
 
         self.flag_paras = False # track 'Enter text' after a 'Save all'
         self.flag_save = False  # track 'Save all (done)'
-        self.flag_names = True  # track change in layer names
 
-        self.w, self.h = 0, 0
-        self.pos, self.pre_max_pos = 0, 0
-        
+        # construct the plug-in window
         r =  gtk.Window.__init__(self, *args)
         # The window manager quit signal:
         self.connect("destroy", gtk.main_quit)  
 
-        self.set_title(_("INFO on active layer"))
+        self.set_title(_("INFO on exclusive view layer"))
 
         vbox = gtk.VBox(spacing=6, homogeneous=False)
-        # special line for name of layer choice
+        hbox = gtk.HBox(homogeneous=False, spacing=6)
+
+        # special line for number of layer choice
         self.combo_box = gtk.combo_box_new_text() #gtk.ComboBox()
-        self.combo_box.set_wrap_width(1)
+        #self.combo_box.set_wrap_width(1)
         self.combo_box.set_has_tooltip(True)
-        self.combo_box.set_tooltip_text(_("Choice of active layer by a click and\n")\
-            +_("selection here or in GIMP layer dialog."))
+        self.combo_box.set_tooltip_text(_("Its the selected number of the exclusive view layer.")\
+            +_("\nIf you see this message, you can scroll with the mouse wheel or ")\
+            +_("click to select.\n     WARNING : don't edit in the 'Layer Dialog' and")\
+            +_(" the window is current at the time of that selection only."))
         self.combo_box.connect("changed", self.name_change)
-        vbox.add(self.combo_box)
+        #self.combo_box.style.arrow_size = 20   # no error but don't works
+        hbox.add(self.combo_box)
+
+        # icon to indicate where it applies
+        stock_ic = gtk.Image()
+        stock_ic.set_from_stock(gtk.STOCK_GO_BACK, gtk.ICON_SIZE_BUTTON)
+        hbox.add(stock_ic)
+        label_sel =  gtk.Label(_("Exclusive view layer "))
+        hbox.add(label_sel)
+        vbox.add(hbox)
 
         # info under layer name
         self.label = gtk.Label()
@@ -109,18 +114,18 @@ class LayerInfo(gtk.Window):
         vbox.add(table)
         # label for the managed parasite 
         self.label1 = gtk.Label()
+        self.label1.set_label("<span foreground='blue' background='white' >"\
+            +' layer-info: '+"</span>")
         self.label1.set_use_markup(True)
         self.label1.set_has_tooltip(True)
-        self.label1.set_tooltip_text(_("Name of the layer parasite manage by this plug-in.\n")\
-            +_("If in blue: next field is the layer parasite text content or none.\n")\
-            +_("If in red: an edited text not attached yet."))
+        self.label1.set_tooltip_text(_("Name of the layer parasite manage by this plug-in."))
         table.attach(self.label1, 0, 1, 0, 1, xoptions=gtk.FILL, yoptions=0)
 
         # text in or should be in the managed parasite
         self.entry = gtk.Entry(max=0)
         self.entry.set_has_tooltip(True)
-        self.entry.set_tooltip_text(_("Display text for layer parasite: 'layer-info'.\n")\
-            +_("It permits editing or creating that parasite."))
+        self.entry.set_tooltip_text(_("Display text for layer parasite: 'layer-info'")\
+            +_(".\nIt permits editing or creating that parasite."))
         table.attach(self.entry, 1, 2, 0, 1)
 
         # add action buttons
@@ -139,143 +144,109 @@ class LayerInfo(gtk.Window):
         hbox.add(self.btn)
         vbox.add(hbox)
 
-        # completes this window
+        # populate the combo_box
+        layers = get_all_layers(self.img)
+        #self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
+        max_pos = len(layers)
+        for i in range(max_pos): 
+            self.combo_box.append_text(_("Layer #%d")%(i+1))
+            layer_view.append(layers[i].visible)
+
+        # completes this window, name
         self.add(vbox)
         self.show_all()
         self.set_keep_above(True)
-        timeout_add(200, self.update, self)
+
+        #this call self.name_change()   #if self.flag_names == True : 
+        self.combo_box.set_active(0)
         return r
-
-    def update(self, *args):
-        """ update the info in the GUI """
-
-        global stop, prob, start_cntr
-
-        img_list = gimp.image_list()
-        if (self.img not in img_list) or (len(self.img.layers) == 0) or stop > 0:
-            stop += 1
-            if stop == 1: gimp.message(prob+_("\nIn update() first 'if' case"))
-            gtk.main_quit()
-            return False
-        # change during the execution? Next to force auto quitting
-        try:
-            # Choose an active layer by plugin? self.img.active_layer = ?
-            self.drw = self.img.active_layer
-            #> layer name
-            if self.flag_names : 
-                self.layers = get_all_layers(self.img)
-                self.names = [lay.name.replace("\n", "/").replace("'", "\'") for lay in self.layers]
-            name = self.drw.name
-            #> layer offsets
-            x, y = self.drw.offsets
-            #> layer position on the stack
-            self.pos = self.layers.index(self.drw) +1
-            max_pos = len(self.layers)
-            #> layer size
-            h = self.drw.height
-            w = self.drw.width
-            #> layer type
-            _type = self.drw.type
-            # Group or Single + ?
-            if hasattr(self.drw,"layers"): Type = _("Group, ")+enum_type[_type]
-            else: 
-                if pdb.gimp_drawable_is_text_layer(self.drw):
-                    Type = _("Single text, ")+enum_type[_type]
-                else: Type = _("Single, ")+enum_type[_type]
-            #> layer parasite
-            n, parasites = get_parasite_list(self.drw)
-        except: 
-            stop += 1
-            if stop == 1: gimp.message(prob+_("\nIn update() 'except' case"))
-            gtk.main_quit()
-            return False
-
-        nflag = parasites.count('layer-info')
-        if  nflag == 0:
-            paras_text = ''
-            flag = _('no')
-        else:
-            paras_text = str(self.drw.parasite_find('layer-info'))
-            # parasite add a zero byte at the end which don't agree with 'gtk.label'
-            paras_text = paras_text.strip(chr(0))
-            flag = _("yes") # put parasite text in the entry field
-        if stop == 0: timeout_add(200, self.update, self)
-
-        layer_val = [self.pos, max_pos, Type, name, x, y, w , h, n, flag]
-
-        # update() in two parts:
-        # 1) the same info list
-        if self.val == layer_val:
-
-            # change colour of 'layer-info:' if new entry text
-            entry_txt = self.entry.get_text()
-            if entry_txt != paras_text and pango.ATTR_FOREGROUND != 'dark red':
-                # seems to diminish the ballonning with time of the refresh
-                self.label1.set_label("<span foreground='dark red' background='white' >"\
-                    +" layer-info: "+"</span>")
-                self.label1.set_use_markup(True)
-            elif entry_txt == paras_text and pango.ATTR_FOREGROUND != 'blue':
-                self.label1.set_label("<span foreground='blue' background='white' >"\
-                    +' layer-info: '+"</span>")
-                self.label1.set_use_markup(True)
-
-            # reset label on 'Save' button after a save if there some change
-            if self.flag_save and (self.pre_save != self.names or self.flag_paras):
-                self.btn.set_label(_("Save all"))
-                self.pre_save = self.names
-                self.flag_save = False
-            return
-
-        # 2) different info, displays it in the window...
-        # packing the layer info into text
-        txt = self.txt%tuple(layer_val)
-        self.label.set_label(txt)
-
-        # the parasite content
-        if  nflag != 0: 
-            self.entry.set_text(paras_text)
-        else: 
-            self.entry.set_text('')
-
-        # updating the combo_box?
-        if self.pre_names != self.names:
-            # empty self.combo_box; next seems to work
-            for i in range(self.pre_max_pos): self.combo_box.remove_text(0)
-            # repopulate it
-            for nam in self.names: self.combo_box.append_text("   %s" %nam)
-            self.pre_max_pos = len(self.names)
-            self.pre_names = self.names
-        self.combo_box.set_active(self.pos-1)
-
-        self.val = layer_val
-        start_cntr += 1
-        if start_cntr == 5 : self.label.set_has_tooltip(False)
-        return True
 
     def name_change(self, btn, data=None) :
         """
-        Active layer by the first combo_box
+        New layer selection. Take into account a possible edit in the 'Layer Dialog'
         """
-        if self.val : 
-            pdb.gimp_image_set_active_layer(self.img, self.layers[btn.get_active()])
+        # still the same image?
+        img_list = gimp.image_list()
+        if (self.img not in img_list) or (len(self.img.layers) == 0) :
+            gimp.message(prob)
+            gtk.main_quit()
+            return
+        # check if layers list is the same
+        temp_layers = get_all_layers(self.img)
+        same_layers = layers == temp_layers
+        if same_layers :
+            index = btn.get_active()
+            # check for possible name change -catch first by 'index == -1'
+            if index == -1:
+                gimp.message(_("ERROR: the layer name is no longer there!"))
+                gtk.main_quit()
+                return
+
+            self.layer = layers[index]
+            #> layer offsets
+            x, y = self.layer.offsets
+            #> layer name
+            name = temp_layers[index].name.replace("\n", "/").replace("'", "\'")
+            #> layer size, name
+            h = self.layer.height
+            w = self.layer.width
+            #> layer type
+            _type = self.layer.type
+            # Group or Single + ?
+            if hasattr(self.layer,"layers"): Type = _("Group, ")+enum_type[_type]
+            else: 
+                if pdb.gimp_drawable_is_text_layer(self.layer):
+                    Type = _("Single text, ")+enum_type[_type]
+                else: Type = _("Single, ")+enum_type[_type]
+            #> layer parasite
+            n, parasites = get_parasite_list(self.layer)
+
+            nflag = parasites.count('layer-info')
+            if  nflag == 0:
+                paras_text = ''
+                flag = _('no')
+            else:
+                paras_text = str(self.layer.parasite_find('layer-info'))
+                # parasite add a zero byte at the end which don't agree with 'gtk.label'
+                paras_text = paras_text.strip(chr(0))
+                flag = _("yes") # put parasite text in the entry field
+            
+            # make visibility effect exclusive (also for GroupLayer)
+            for L in layers: L.visible = False
+            make_layer_visible(self.layer)
             pdb.gimp_displays_flush()
-            self.combo_box.set_has_tooltip(False)
-            self.flag_names = False
+
+            layer_val = [Type, name, x, y, w , h, n, flag]
+            # packing the layer info into text
+            txt = self.txt%tuple(layer_val)
+            self.label.set_label(txt)
+
+            # and the parasite content
+            if  nflag != 0: 
+                self.entry.set_text(paras_text)
+            else: 
+                self.entry.set_text('')
+
+            # reset label on 'Save' button after a save if there some change
+            if self.flag_save and self.flag_paras:
+                self.btn.set_label(_("Save all"))
+                self.flag_save = False
+
+        else :
+            gimp.message(prob)
+            if len(temp_layers) > 0: 
+                make_layer_visible(temp_layers[0])
+            gtk.main_quit()
+
         return
 
-    def add_info(self, btn, data=None) :
+    def add_info(self, btn) :
         """
         Text into the layer parasite 'layer-info'
         """
         paras_text = self.entry.get_text()
-        self.drw.attach_new_parasite('layer-info', 1, paras_text)
-        # to indicate a save text in the parasite
-        self.label1.set_label("<span foreground='blue' background='white' >"+\
-            ' layer-info: '+"</span>")
-        self.label1.set_use_markup(True)
-        # flag to indicate usage of this
-        if self.flag_save: self.flag_paras = True
-        else: self.flag_paras = False
+        self.layer.attach_new_parasite('layer-info', 1, paras_text)
+        self.flag_paras = True
         return
         
     def save_file(self, btn, data=None) :
@@ -296,7 +267,7 @@ class LayerInfo(gtk.Window):
             +_("# Note: in text variable the newline have been replaced by '/'.\n\n")
 
         cr = 1  # the position of the layer
-        for L in self.layers:    # all the layers
+        for L in layers:    # all the layers
             if version >= (2, 8, 0): childs = L.children
             else: childs = None
             if childs: 
@@ -311,8 +282,8 @@ class LayerInfo(gtk.Window):
             if n == 0: dot = ' .'
             else: dot = ' :'
             txt += _("%d%s name=\"%s\", Offsets=(%d , %d), Width*Height=%d*%d px,%s Parasite=%d%s\n")\
-                %(cr, tag, L.name.replace("\n", "/"), L.offsets[0], L.offsets[1], L.width, L.height,\
-                children, n, dot)
+                %(cr, tag, L.name.replace("\n", "/"), L.offsets[0], L.offsets[1],\
+                 L.width, L.height, children, n, dot)
             for p in paras:
                 paras_text = str(L.parasite_find(p))
                 paras_text = paras_text.strip(chr(0))
@@ -338,8 +309,8 @@ class LayerInfo(gtk.Window):
             chooser.destroy()
             gimp.message(_("INFO: save was aborted by the user"))
             return
-        filename = chooser.get_filename()
 
+        filename = chooser.get_filename()
         if filename:
             try:
                 file_obj = open(filename, "w")
@@ -347,10 +318,12 @@ class LayerInfo(gtk.Window):
                 file_obj.close()
                 # for a file save ->
                 btn.set_label(_("Save all (done)"))
-                self.pre_save = self.names
+                #self.pre_save = self.names
                 self.flag_save = True
+                self.flag_paras = False # reset for 'Enter text'
             except:
                 gimp.message(_("ERROR in saving file: ")+filename)
+                
         else: gimp.message(_("ERROR: no file-name given!"))
 
         chooser.destroy()
@@ -371,6 +344,21 @@ def get_all_layers(parent):
             container.extend(get_all_layers(layer) )
     return container
 
+def make_layer_visible(layer):
+    """ 
+    Work for group layer also
+    """
+    layer.visible = True
+    # children visible
+    if hasattr(layer,"layers"):
+        layers = get_all_layers(layer)
+        for L in layers: L.visible = True
+    # parent visible
+    while layer.parent != None: 
+        layer = layer.parent
+        layer.visible = True
+    return
+
 def get_parasite_list(item):
     # adaptation to GIMP version?
     if version > (2, 8, 0): n, parasites = pdb.gimp_item_get_parasite_list(item)
@@ -379,31 +367,35 @@ def get_parasite_list(item):
 
 ### Main procedure #############################################################
 
-def info_layers (img, drw):
-    global stop
+def info_layers(img, drw):
+    img.undo_group_start()
     # avoid duplicate launch
     if shelf.has_key('info_layers') and shelf['info_layers']:
         gimp.message(_("WARNING: an 'info_layers' instance is already running!"))
     else:
         shelf['info_layers'] = True
 
-        r = LayerInfo(img, drw)
+        r = LayerViewer(img, drw)
         gtk.main()
 
         shelf['info_layers'] = False
-        stop += 1
+        if (img in gimp.image_list()):
+            layers_aft = get_all_layers(img) 
+            if layers_aft == layers: 
+                for i in range(len(layers)): layers[i].visible = layer_view[i]
+            img.undo_group_end()
 
 register(
         'info_layers',
-        _("Display actual infos on the active layer, manage a 'layer-info' ")\
-            +_("parasite and an all info file.\nFrom: ")+fi,
-        _("Display a window with live infos on the selected layer; the controls are ")\
-            +_("a ComboBox for layer name selection, 'Enter text' in a layer parasite")\
-            +_(" and 'Save all' in a text file."),
-        'David Marquez de la Cruz, R. Brizard',
+        _("Display info and manage the selected layer; with an exclusive view, an ")\
+            +_("info parasite and also an all info file.\nFrom: ")+fi,
+        _("Display a window with info on the selected layer; the controls are ")\
+            +_("a ComboBox for layer number selection, 'Enter text' in a layer ")\
+            +_("parasite and 'Save all' in a text file."),
+        'R. Brizard',
         '((c) GPL 2, R. Brizard)',
         '2014',
-        _("Layer-info..."),
+        _("Info-layers..."),
         '*',  # any imagetypes
         [
           (PF_IMAGE, "img", "IMAGE:", None),
@@ -416,3 +408,4 @@ register(
         )
 
 main() 
+
