@@ -15,8 +15,8 @@ List of plug-ins
 
 Display a window with (7 items) live info on the selected layer.
 
-Version 0.1 have three action buttons: at the top a ComboBox to select the active layer 
-in an alternate way, at the bottom an 'Enter text' in 'layer-info' parasite and 'Save all' in a file.
+Version 0.2 have three action buttons: at the top a ComboBox to select the layer (with exclusive view), 
+at the bottom an 'Enter text' in 'layer-info' layer parasite and 'Save all' in a file.
   
   **Installation**
   
@@ -26,7 +26,7 @@ to "[home directory]/.gimp-2.x/plug-ins" (merging the 'locale' folder).
 On Linux, enable the executable flag on the "info_layers.py" file.
   
 In the main menu, go to "Extensions/Plugins-Python/Layer/Info-layers..." for English. 
-The plug-in window should appears.
+The plug-in window should appears if you click on that.
 
 ### ArrowsCreator-0.2.py : #####################################################
   **Description**
@@ -38,5 +38,6 @@ Version 0.2.2
   
   **Installation**
   
-At installation during the start of GIMP a configuration window appears for the menu
+At installation during the first start of GIMP, a configuration window appears for the menu
  and default arrow.
+Version 0.2 was adapted to GIMP-2.8 but now it don't works as intended for arrow in GIMP-2.8.14!
